@@ -118,6 +118,10 @@ button {
 }
 
 button:nth-child(2) {
+  background: #334155;
+}
+
+button:nth-child(3) {
   background: #1d4ed8;
 }
 
@@ -164,5 +168,8 @@ pre {
   .actions {
     grid-template-columns: 1fr 1fr;
   }
-}
 
+  .actions button:last-child {
+    grid-column: 1 / -1;
+  }
+}

@@ -15,6 +15,7 @@ const els = {
   security: document.querySelector("#security"),
   hidden: document.querySelector("#hidden"),
   connect: document.querySelector("#connect"),
+  connectAny: document.querySelector("#connectAny"),
   send: document.querySelector("#send"),
   log: document.querySelector("#log")
 };
@@ -51,17 +52,26 @@ function onStatusChanged(event) {
   log(`Status: ${text}`);
 }
 
-async function connectBluetooth() {
+async function connectBluetooth(useAnyDevice = false) {
   try {
     assertSupported();
     els.connect.disabled = true;
+    els.connectAny.disabled = true;
     els.send.disabled = true;
 
-    log("Opening browser Bluetooth chooser...");
-    device = await navigator.bluetooth.requestDevice({
-      filters: [{ services: [SERVICE_UUID] }],
-      optionalServices: [SERVICE_UUID]
-    });
+    log(useAnyDevice
+      ? "Opening browser Bluetooth chooser without service filter..."
+      : "Opening browser Bluetooth chooser with provisioning service filter...");
+
+    device = await navigator.bluetooth.requestDevice(useAnyDevice
+      ? {
+          acceptAllDevices: true,
+          optionalServices: [SERVICE_UUID]
+        }
+      : {
+          filters: [{ services: [SERVICE_UUID] }],
+          optionalServices: [SERVICE_UUID]
+        });
 
     device.addEventListener("gattserverdisconnected", onDisconnected);
     log(`Selected: ${device.name || device.id}`);
@@ -86,9 +96,13 @@ async function connectBluetooth() {
     els.send.disabled = false;
     log("Ready to send Wi-Fi credentials.");
   } catch (error) {
+    if (useAnyDevice && /service/i.test(error.message)) {
+      log("Selected device does not expose the provisioning service. Pick the Windows provisioner device, or check that the Windows agent is advertising.");
+    }
     log(`Bluetooth error: ${error.message}`);
   } finally {
     els.connect.disabled = false;
+    els.connectAny.disabled = false;
   }
 }
 
@@ -126,7 +140,8 @@ async function sendWifi() {
   }
 }
 
-els.connect.addEventListener("click", connectBluetooth);
+els.connect.addEventListener("click", () => connectBluetooth(false));
+els.connectAny.addEventListener("click", () => connectBluetooth(true));
 els.send.addEventListener("click", sendWifi);
 
 if ("bluetooth" in navigator && window.isSecureContext) {
@@ -140,4 +155,3 @@ if ("bluetooth" in navigator && window.isSecureContext) {
 if ("serviceWorker" in navigator && window.isSecureContext) {
   navigator.serviceWorker.register("./sw.js").catch(() => {});
 }
-

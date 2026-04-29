@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0f766e">
+  <title>Wi-Fi Provisioner</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="shell">
+    <section class="panel">
+      <div class="heading">
+        <p class="eyebrow">Web Bluetooth</p>
+        <h1>Wi-Fi Provisioner</h1>
+      </div>
+
+      <div id="support" class="notice"></div>
+
+      <label>
+        <span>Wi-Fi SSID</span>
+        <input id="ssid" autocomplete="off" placeholder="SiteWiFi">
+      </label>
+
+      <label>
+        <span>Wi-Fi Password</span>
+        <input id="password" type="password" autocomplete="off" placeholder="8-63 characters">
+      </label>
+
+      <label>
+        <span>Shared Secret</span>
+        <input id="token" type="password" autocomplete="off" placeholder="Printed by Windows installer">
+      </label>
+
+      <div class="row">
+        <label>
+          <span>Security</span>
+          <select id="security">
+            <option value="WPA2PSK">WPA2PSK</option>
+            <option value="WPA3SAE">WPA3SAE</option>
+            <option value="WPAPSK">WPAPSK</option>
+            <option value="open">open</option>
+          </select>
+        </label>
+
+        <label class="checkbox">
+          <input id="hidden" type="checkbox">
+          <span>Hidden network</span>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button id="connect" type="button">Connect Bluetooth</button>
+        <button id="send" type="button" disabled>Send Wi-Fi</button>
+      </div>
+
+      <pre id="log" aria-live="polite">Ready.</pre>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
+
